@@ -1,0 +1,28 @@
+{
+  "name": "adactin-hotel-automation-typescript",
+  "version": "1.0.0",
+  "description": "Simple TypeScript Playwright UI and API framework",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "playwright test --project=chromium",
+    "test:ui": "playwright test --project=chromium",
+    "test:all-browsers": "playwright test --project=chromium --project=firefox --project=webkit",
+    "test:smoke": "playwright test --project=chromium --grep @smoke",
+    "test:api": "playwright test --project=api",
+    "test:requirements": "playwright test --project=requirements",
+    "report": "playwright show-report",
+    "allure:generate": "allure generate allure-results --clean -o allure-report",
+    "allure:open": "allure open allure-report",
+    "clean": "node scripts/clean.cjs"
+  },
+  "type": "commonjs",
+  "devDependencies": {
+    "@playwright/test": "1.56.1",
+    "@types/node": "22.20.5",
+    "allure-commandline": "2.34.1",
+    "allure-playwright": "3.4.2",
+    "dotenv": "16.6.1",
+    "typescript": "5.9.3"
+  },
+  "private": true
+}
