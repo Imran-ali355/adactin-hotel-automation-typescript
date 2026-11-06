@@ -4,79 +4,76 @@ import { AuthService } from '../../services/auth-service';
 import { UserService } from '../../services/user-service';
 import { createTestUser } from './test-user';
 import { attachApiLog } from '../../services/apiLogger';
+import data from '../../test_Data/api.json';
 
-test('Update logged-in user account', async ({ request }, testInfo) => {
+let users: UserService;
+let auth: AuthService;
+test.beforeEach(async ({ request }) => {
   const api = new ApiService(request);
-  const users = new UserService(api);
-  const auth = new AuthService(api);
+  users = new UserService(api);
+  auth = new AuthService(api);
+});
+
+test('Update logged-in user account', async ({}, testInfo) => {
   const user = createTestUser();
   const registration = await test.step('Register a test user', () => users.register(user));
   await attachApiLog(testInfo, 'Test user registration response', registration);
-  expect(registration.status()).toBe(201);
+  expect(registration.status()).toBe(data.status.created);
 
   const loginResponse = await test.step('Log in as the test user', () => auth.login(user));
   await attachApiLog(testInfo, 'Test user login response', loginResponse);
-  expect(loginResponse.status()).toBe(200);
+  expect(loginResponse.status()).toBe(data.status.ok);
 
   const updateResponse = await test.step('Update the account', () =>
     users.replaceAccount({
-      fullname: 'Updated User',
-      email: `updated-${user.email}`,
-      username: `updated_${user.username}`
+      fullname: data.users.updatedAccountFullname,
+      email: `${data.users.updatedEmailPrefix}${user.email}`,
+      username: `${data.users.updatedUsernamePrefix}${user.username}`
     })
   );
   await attachApiLog(testInfo, 'Account update response', updateResponse);
-
-  expect(updateResponse.status()).toBe(200);
+  expect(updateResponse.status()).toBe(data.status.ok);
 });
 
-test('Require login to update account', async ({ request }, testInfo) => {
-  const users = new UserService(new ApiService(request));
+test('Require login to update account', async ({}, testInfo) => {
   const response = await test.step('Update the account without logging in', () =>
     users.replaceAccount({
-      fullname: 'Updated User',
-      email: 'updateduser@example.com',
-      username: 'updatedUser'
+      fullname: data.users.updatedAccountFullname,
+      email: data.users.unauthenticatedUpdateEmail,
+      username: data.users.unauthenticatedUpdateUsername
     })
   );
   await attachApiLog(testInfo, 'Unauthenticated account update response', response);
-
-  expect(response.status()).toBe(401);
+  expect(response.status()).toBe(data.status.unauthorized);
 });
 
-test('Reject account update without full name', async ({ request }, testInfo) => {
-  const api = new ApiService(request);
-  const users = new UserService(api);
-  const auth = new AuthService(api);
+test('Reject account update without full name', async ({}, testInfo) => {
   const user = createTestUser();
   const registration = await test.step('Register a test user', () => users.register(user));
   await attachApiLog(testInfo, 'Test user registration response', registration);
-  expect(registration.status()).toBe(201);
+  expect(registration.status()).toBe(data.status.created);
   const loginResponse = await test.step('Log in as the test user', () => auth.login(user));
   await attachApiLog(testInfo, 'Test user login response', loginResponse);
-  expect(loginResponse.status()).toBe(200);
+  expect(loginResponse.status()).toBe(data.status.ok);
 
   const response = await test.step('Update the account without a full name', () =>
     users.replaceAccount({
-      email: 'incomplete@example.com',
-      username: 'incompleteUser'
+      email: data.users.incompleteEmail,
+      username: data.users.incompleteUsername
     })
   );
   await attachApiLog(testInfo, 'Incomplete account update response', response);
-
-  expect(response.status()).toBe(400);
+  expect(response.status()).toBe(data.status.badRequest);
 });
 
-test('Reject unknown account update endpoint', async ({ request }, testInfo) => {
-  const users = new UserService(new ApiService(request));
+test('Reject unknown account update endpoint', async ({}, testInfo) => {
   const response = await test.step('Update an unknown endpoint', () =>
     users.replaceUnknownAccount({
-      fullname: 'Updated User',
-      email: 'updateduser@example.com',
-      username: 'updatedUser'
+      fullname: data.users.updatedAccountFullname,
+      email: data.users.unknownUpdateEmail,
+      username: data.users.unknownUpdateUsername
     })
   );
   await attachApiLog(testInfo, 'Unknown account update response', response);
-
-  expect(response.status()).toBe(404);
+  expect(response.status()).toBe(data.status.notFound);
 });

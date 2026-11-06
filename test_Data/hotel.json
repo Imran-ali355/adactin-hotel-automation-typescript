@@ -1,0 +1,22 @@
+{
+  "search": {
+    "location": "Sydney",
+    "hotel": "Hotel Creek",
+    "roomType": "Standard",
+    "rooms": "1",
+    "checkInOffset": 7,
+    "checkOutOffset": 9,
+    "adults": "1",
+    "children": "0"
+  },
+  "booking": {
+    "firstName": "Automation",
+    "lastName": "Test",
+    "address": "Test Address Sydney",
+    "card": "4111111111111111",
+    "cardType": "VISA",
+    "month": "12",
+    "yearOffset": 1,
+    "cvv": "123"
+  }
+}

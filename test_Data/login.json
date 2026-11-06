@@ -1,0 +1,33 @@
+{
+  "url": "index.php",
+  "titlePattern": "Adactin",
+  "fields": ["username", "password", "login"],
+  "passwordType": "password",
+  "emptyCases": [
+    { "name": "both empty", "user": "", "pass": "", "error": "#username_span" },
+    { "name": "username empty", "user": "", "pass": "invalid", "error": "#username_span" },
+    { "name": "password empty", "user": "testuser", "pass": "", "error": "#password_span" }
+  ],
+  "invalidCases": [
+    ["unknown user", "unknown_pw_test_34883", "invalid"],
+    ["wrong password", "", "wrong-password-928"],
+    ["SQL-like input", "' OR '1'='1", "' OR '1'='1"],
+    ["whitespace", "   ", "   "],
+    ["long input", "long", "long"]
+  ],
+  "longInputCharacter": "x",
+  "longInputLength": 100,
+  "invalidMessage": "Invalid Login",
+  "invalidUsernameFallback": "testuser",
+  "searchUrl": "SearchHotel\\.php",
+  "forgotPasswordLink": "Forgot Password?",
+  "forgotPasswordUrl": "ForgotPassword\\.php",
+  "registerLink": "New User Register Here",
+  "registerUrl": "Register\\.php",
+  "protectedUrls": ["SearchHotel.php", "BookedItinerary.php", "ChangePassword.php"],
+  "greetingPrefix": "Hello ",
+  "greetingSuffix": "!",
+  "logoutLink": "Logout",
+  "logoutUrl": "Logout\\.php",
+  "loginAgainLink": "Click here to login again"
+}

@@ -1,0 +1,25 @@
+{
+  "url": "Register.php",
+  "submitButton": "Submit",
+  "resetButton": "Reset",
+  "emptyRequired": ["username_span", "password_span", "re_password_span", "full_name_span", "email_add_span", "captcha_span", "tnc_span"],
+  "lengthCases": [
+    { "field": "username", "error": "username_span", "lengths": [7, 8, 9, 19, 20, 21], "minimum": 8 },
+    { "field": "password", "error": "password_span", "lengths": [5, 6, 7, 19, 20, 21], "minimum": 6 }
+  ],
+  "fillCharacter": "a",
+  "maximumFieldLength": 20,
+  "mismatchPasswords": ["Password123!", "Different123!"],
+  "mismatchMessage": "Do Not Match",
+  "emptyValue": "",
+  "invalidEmails": ["plainaddress", "test@", "@example.com", "test@example"],
+  "invalidEmailMessage": "Invalid email",
+  "validEmail": "automation@example.com",
+  "nameLengths": [49, 50, 51],
+  "nameCharacter": "A",
+  "maximumNameLength": 50,
+  "loginInput": "login",
+  "resetUsername": "testuser123",
+  "resetPassword": "Password123!",
+  "backLink": "Go back to Login page"
+}

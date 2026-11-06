@@ -1,0 +1,34 @@
+{
+  "locations": ["Sydney", "Melbourne", "Brisbane", "Adelaide", "London", "New York", "Los Angeles", "Paris"],
+  "selectionUrl": "SelectHotel\\.php",
+  "searchUrl": "SearchHotel\\.php",
+  "missing": [
+    ["location", "location_span"],
+    ["rooms", "num_room_span"],
+    ["adults", "adults_room_span"],
+    ["checkIn", "checkin_span"],
+    ["checkOut", "checkout_span"]
+  ],
+  "quantityCases": [
+    ["rooms", ["1", "2", "9", "10"]],
+    ["adults", ["1", "2", "3", "4"]],
+    ["children", ["0", "1", "3", "4"]]
+  ],
+  "oneResult": 1,
+  "noResults": 0,
+  "emptyValue": "",
+  "invalidDropdowns": [
+    ["room_nos", ["0", "11"]],
+    ["adult_room", ["0", "5"]],
+    ["child_room", ["-1", "5"]]
+  ],
+  "optionalResults": 4,
+  "roomTypes": ["Standard", "Double", "Deluxe", "Super Deluxe"],
+  "beforeError": "before",
+  "afterError": "after",
+  "oneNight": "1",
+  "checkoutBeforeOffsets": { "checkIn": 8, "checkOut": 7 },
+  "oneNightOffsets": { "checkIn": 7, "checkOut": 8 },
+  "resetDefaults": { "location": "", "rooms": "1", "adults": "1", "children": "0" },
+  "resetInput": { "rooms": "10", "adults": "4", "children": "4" }
+}

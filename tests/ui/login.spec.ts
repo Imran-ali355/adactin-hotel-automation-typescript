@@ -1,52 +1,46 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../../pages/LoginPage';
+import data from '../../test_Data/login.json';
 
-test.beforeEach(async ({ page }) => { await new LoginPage(page).open(); });
+test.beforeEach(async ({ page }) => { await page.goto(data.url, { waitUntil: 'domcontentloaded' }); });
 test('LOGIN-01 @smoke login page controls and title', async ({ page }) => {
-  await expect(page).toHaveTitle(/Adactin/);
-  for (const id of ['username', 'password', 'login']) await expect(page.locator(`#${id}`)).toBeVisible();
-  await expect(page.locator('#password')).toHaveAttribute('type', 'password');
+  await expect(page).toHaveTitle(new RegExp(data.titlePattern));
+  for (const id of data.fields) await expect(page.locator(`#${id}`)).toBeVisible();
+  await expect(page.locator('#password')).toHaveAttribute('type', data.passwordType);
 });
-for (const data of [
-  { name: 'both empty', user: '', pass: '', error: '#username_span' },
-  { name: 'username empty', user: '', pass: 'invalid', error: '#username_span' },
-  { name: 'password empty', user: 'testuser', pass: '', error: '#password_span' },
-]) {
-  test(`LOGIN-02 @ep ${data.name}`, async ({ page }) => {
-    await new LoginPage(page).login(data.user, data.pass);
-    await expect(page.locator(data.error)).not.toBeEmpty();
-    await expect(page).toHaveURL(/index\.php/);
+for (const scenario of data.emptyCases) {
+  test(`LOGIN-02 @ep ${scenario.name}`, async ({ page }) => {
+    await new LoginPage(page).login(scenario.user, scenario.pass);
+    await expect(page.locator(scenario.error)).not.toBeEmpty();
+    await expect(page).toHaveURL(new RegExp(data.url.replace('.', '\\.')));
   });
 }
-for (const [name, user, pass] of [
-  ['unknown user', 'unknown_pw_test_34883', 'invalid'],
-  ['wrong password', process.env.ADACTIN_USERNAME || 'testuser', 'wrong-password-928'],
-  ['SQL-like input', "' OR '1'='1", "' OR '1'='1"],
-  ['whitespace', '   ', '   '],
-  ['long input', 'x'.repeat(100), 'x'.repeat(100)],
-]) {
+for (const [name, user, pass] of data.invalidCases) {
+  const username = name === 'wrong password' ? process.env.ADACTIN_USERNAME || data.invalidUsernameFallback : user;
+  const password = pass === 'long' ? data.longInputCharacter.repeat(data.longInputLength) : pass;
+  const testedUsername = user === 'long' ? data.longInputCharacter.repeat(data.longInputLength) : username;
   test(`LOGIN-03 @ep ${name} is rejected`, async ({ page }) => {
-    await new LoginPage(page).login(user, pass);
-    await expect(page.locator('.auth_error')).toContainText('Invalid Login');
-    await expect(page).not.toHaveURL(/SearchHotel\.php/);
+    await new LoginPage(page).login(testedUsername, password);
+    await expect(page.locator('.auth_error')).toContainText(data.invalidMessage);
+    await expect(page).not.toHaveURL(new RegExp(data.searchUrl));
   });
 }
 test('LOGIN-04 @smoke valid login and logout', async ({ page }) => {
-  test.skip(!process.env.ADACTIN_USERNAME || !process.env.ADACTIN_PASSWORD, 'Set ADACTIN_USERNAME and ADACTIN_PASSWORD to run this test.');
   const login = new LoginPage(page);
   await login.loginAsUser();
-  await expect(page.locator('#username_show')).toHaveValue(`Hello ${process.env.ADACTIN_USERNAME}!`);
+  await expect(page.locator('#username_show')).toHaveValue(`${data.greetingPrefix}${process.env.ADACTIN_USERNAME}${data.greetingSuffix}`);
   await login.logout();
-  await page.getByRole('link', { name: 'Click here to login again' }).click();
+  await expect(page).toHaveURL(new RegExp(data.logoutUrl));
+  await page.getByRole('link', { name: data.loginAgainLink }).click();
   await expect(page.locator('#login')).toBeVisible();
 });
-for (const [name, url] of [['Forgot Password?', 'ForgotPassword.php'], ['New User Register Here', 'Register.php']]) {
+for (const [name, url] of [[data.forgotPasswordLink, data.forgotPasswordUrl], [data.registerLink, data.registerUrl]]) {
   test(`LOGIN-05 navigation to ${url}`, async ({ page }) => {
     await page.getByRole('link', { name, exact: true }).click();
-    await expect(page).toHaveURL(new RegExp(url.replace('.', '\\.')));
+    await expect(page).toHaveURL(new RegExp(url));
   });
 }
-for (const path of ['SearchHotel.php', 'BookedItinerary.php', 'ChangePassword.php']) {
+for (const path of data.protectedUrls) {
   test(`LOGIN-06 unauthenticated access to ${path}`, async ({ page }) => {
     await page.goto(path);
     await expect(page.locator('#login')).toBeVisible();

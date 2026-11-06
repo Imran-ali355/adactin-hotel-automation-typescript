@@ -1,0 +1,20 @@
+{
+  "dateCases": [
+    { "name": "same-day stay", "checkInOffset": 7, "checkOutOffset": 7 },
+    { "name": "past stay", "checkInOffset": -2, "checkOutOffset": -1 },
+    { "name": "impossible calendar date", "checkIn": "31/02/2028", "checkOut": "03/03/2028" },
+    { "name": "non-date text", "checkIn": "abcdefghij", "checkOut": "klmnopqrst" }
+  ],
+  "searchUrl": "SearchHotel\\.php",
+  "emptyMessages": ["", ""],
+  "emptyValue": "",
+  "invalidCvv": ["12", "12345", "abc"],
+  "invalidCard": "abcdefghijklmnop",
+  "whitespace": "   ",
+  "emptyCvv": "",
+  "whitespaceFields": [
+    ["firstName", "first_name_span"],
+    ["lastName", "last_name_span"],
+    ["address", "address_span"]
+  ]
+}

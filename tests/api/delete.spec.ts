@@ -4,59 +4,52 @@ import { AuthService } from '../../services/auth-service';
 import { UserService } from '../../services/user-service';
 import { createTestUser } from './test-user';
 import { attachApiLog } from '../../services/apiLogger';
+import data from '../../test_Data/api.json';
 
-test('Delete logged-in user account', async ({ request }, testInfo) => {
+let users: UserService;
+let auth: AuthService;
+test.beforeEach(async ({ request }) => {
   const api = new ApiService(request);
-  const users = new UserService(api);
-  const auth = new AuthService(api);
+  users = new UserService(api);
+  auth = new AuthService(api);
+});
+
+test('Delete logged-in user account', async ({}, testInfo) => {
   const user = createTestUser();
   const registration = await test.step('Register a test user', () => users.register(user));
   await attachApiLog(testInfo, 'Test user registration response', registration);
-  expect(registration.status()).toBe(201);
+  expect(registration.status()).toBe(data.status.created);
 
   const loginResponse = await test.step('Log in as the test user', () => auth.login(user));
   await attachApiLog(testInfo, 'Test user login response', loginResponse);
-  expect(loginResponse.status()).toBe(200);
+  expect(loginResponse.status()).toBe(data.status.ok);
 
   const response = await test.step('Delete the account', () => users.deleteAccount());
   await attachApiLog(testInfo, 'Account deletion response', response);
-
-  expect(response.status()).toBe(200);
+  expect(response.status()).toBe(data.status.ok);
 });
 
-test('Require login to delete account', async ({ request }, testInfo) => {
-  const users = new UserService(new ApiService(request));
-  const response = await test.step('Delete the account without logging in', () =>
-    users.deleteAccount()
-  );
+test('Require login to delete account', async ({}, testInfo) => {
+  const response = await test.step('Delete the account without logging in', () => users.deleteAccount());
   await attachApiLog(testInfo, 'Unauthenticated account deletion response', response);
-
-  expect(response.status()).toBe(401);
+  expect(response.status()).toBe(data.status.unauthorized);
 });
 
-test('Reject login with wrong password before deletion', async ({ request }, testInfo) => {
-  const api = new ApiService(request);
-  const users = new UserService(api);
-  const auth = new AuthService(api);
+test('Reject login with wrong password before deletion', async ({}, testInfo) => {
   const user = createTestUser();
   const registration = await test.step('Register a test user', () => users.register(user));
   await attachApiLog(testInfo, 'Test user registration response', registration);
-  expect(registration.status()).toBe(201);
+  expect(registration.status()).toBe(data.status.created);
 
   const response = await test.step('Log in with an incorrect password', () =>
-    auth.login({ ...user, password: 'WrongPassword999!' })
+    auth.login({ ...user, password: data.users.wrongPassword })
   );
   await attachApiLog(testInfo, 'Incorrect password login response', response);
-
-  expect(response.status()).toBe(401);
+  expect(response.status()).toBe(data.status.unauthorized);
 });
 
-test('Reject unknown account deletion endpoint', async ({ request }, testInfo) => {
-  const users = new UserService(new ApiService(request));
-  const response = await test.step('Delete an unknown endpoint', () =>
-    users.deleteUnknownAccount()
-  );
+test('Reject unknown account deletion endpoint', async ({}, testInfo) => {
+  const response = await test.step('Delete an unknown endpoint', () => users.deleteUnknownAccount());
   await attachApiLog(testInfo, 'Unknown account deletion response', response);
-
-  expect(response.status()).toBe(404);
+  expect(response.status()).toBe(data.status.notFound);
 });
