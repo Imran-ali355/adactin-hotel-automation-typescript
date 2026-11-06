@@ -44,9 +44,10 @@ npm run report
 | --- | --- |
 | `pages/` | Small classes with page actions and locators |
 | `fixtures/hotel.ts` | Login/setup and cleanup of bookings made by the current test |
-| `test-data/hotel.ts` | Typed search and booking data; dates relative to today |
+| `test_Data/*.json` | Data-driven UI and API scenarios and expected values |
+| `test-data/hotel.ts` | Typed search and booking data built from JSON; dates relative to today |
 | `tests/ui/` | Login, registration, account forms, search, selection, booking, itinerary |
-| `tests/api/`, `services/` | Converted API scenarios and typed request wrappers |
+| `tests/api/`, `services/` | API scenarios with per-test `beforeEach` setup and typed request wrappers |
 | `tests/requirements/` | Stricter business rules that need product-owner agreement |
 | `playwright.config.ts` | Browsers, timeouts, retries and reports |
 | `Jenkinsfile`, `scripts/run-docker.sh` | CI pipeline and fresh test-container execution |

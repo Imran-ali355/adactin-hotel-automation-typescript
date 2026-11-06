@@ -1,0 +1,8 @@
+{
+  "hotelRequiredMessage": "Please Select a Hotel",
+  "bookingUrl": "BookHotel\\.php",
+  "hotelRadioCount": 4,
+  "firstRadio": 0,
+  "secondRadio": 1,
+  "searchUrl": "SearchHotel\\.php"
+}

@@ -1,3 +1,5 @@
+import hotelData from '../test_Data/hotel.json';
+
 export interface SearchData {
   location: string; hotel: string; roomType: string; rooms: string;
   checkIn: string; checkOut: string; adults: string; children: string;
@@ -12,11 +14,11 @@ export function dateAfter(days: number): string {
   return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
 }
 export function searchData(overrides: Partial<SearchData> = {}): SearchData {
-  return { location: 'Sydney', hotel: 'Hotel Creek', roomType: 'Standard', rooms: '1',
-    checkIn: dateAfter(7), checkOut: dateAfter(9), adults: '1', children: '0', ...overrides };
+  const { checkInOffset, checkOutOffset, ...defaults } = hotelData.search;
+  return { ...defaults, checkIn: dateAfter(checkInOffset),
+    checkOut: dateAfter(checkOutOffset), ...overrides };
 }
 export function bookingData(overrides: Partial<BookingData> = {}): BookingData {
-  return { firstName: 'Automation', lastName: 'Test', address: 'Test Address Sydney',
-    card: '4111111111111111', cardType: 'VISA', month: '12',
-    year: String(new Date().getFullYear() + 1), cvv: '123', ...overrides };
+  const { yearOffset, ...defaults } = hotelData.booking;
+  return { ...defaults, year: String(new Date().getFullYear() + yearOffset), ...overrides };
 }

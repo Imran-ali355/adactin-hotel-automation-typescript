@@ -1,61 +1,59 @@
 import { test, expect } from '@playwright/test';
+import data from '../../test_Data/registration.json';
 
-test.beforeEach(async ({ page }) => { await page.goto('Register.php', { waitUntil: 'domcontentloaded' }); });
+test.beforeEach(async ({ page }) => { await page.goto(data.url, { waitUntil: 'domcontentloaded' }); });
 test('REG-01 @ep empty form validates all mandatory fields', async ({ page }) => {
-  await page.locator('#Submit').click();
-  for (const id of ['username_span', 'password_span', 're_password_span', 'full_name_span', 'email_add_span', 'captcha_span', 'tnc_span']) {
+  await page.locator(`#${data.submitButton}`).click();
+  for (const id of data.emptyRequired) {
     await expect(page.locator(`#${id}`)).not.toBeEmpty();
   }
 });
-for (const [field, error, lengths, minimum] of [
-  ['username', 'username_span', [7, 8, 9, 19, 20, 21], 8],
-  ['password', 'password_span', [5, 6, 7, 19, 20, 21], 6],
-] as const) {
-  for (const length of lengths) {
-    test(`REG-02 @bva ${field} length ${length}`, async ({ page }) => {
-      await page.locator(`#${field}`).fill('a'.repeat(length));
+for (const scenario of data.lengthCases) {
+  for (const length of scenario.lengths) {
+    test(`REG-02 @bva ${scenario.field} length ${length}`, async ({ page }) => {
+      await page.locator(`#${scenario.field}`).fill(data.fillCharacter.repeat(length));
       // Other required fields are empty: this never creates an account.
-      await page.locator('#Submit').click();
-      await expect(page.locator(`#${field}`)).toHaveValue('a'.repeat(Math.min(length, 20)));
-      if (length < minimum) await expect(page.locator(`#${error}`)).toContainText(`minimum ${minimum}`);
-      else await expect(page.locator(`#${error}`)).toBeEmpty();
+      await page.locator(`#${data.submitButton}`).click();
+      await expect(page.locator(`#${scenario.field}`)).toHaveValue(data.fillCharacter.repeat(Math.min(length, data.maximumFieldLength)));
+      if (length < scenario.minimum) await expect(page.locator(`#${scenario.error}`)).toContainText(`minimum ${scenario.minimum}`);
+      else await expect(page.locator(`#${scenario.error}`)).toHaveText(data.emptyValue);
     });
   }
 }
 test('REG-03 @ep passwords must match', async ({ page }) => {
-  await page.locator('#password').fill('Password123!');
-  await page.locator('#re_password').fill('Different123!');
-  await page.locator('#Submit').click();
-  await expect(page.locator('#re_password_span')).toContainText('Do Not Match');
+  await page.locator('#password').fill(data.mismatchPasswords[0]);
+  await page.locator('#re_password').fill(data.mismatchPasswords[1]);
+  await page.locator(`#${data.submitButton}`).click();
+  await expect(page.locator('#re_password_span')).toContainText(data.mismatchMessage);
 });
-for (const email of ['plainaddress', 'test@', '@example.com', 'test@example']) {
+for (const email of data.invalidEmails) {
   test(`REG-04 @ep invalid email ${email}`, async ({ page }) => {
     await page.locator('#email_add').fill(email);
     await page.locator('#full_name').click();
-    await expect(page.locator('.email_err')).toContainText('Invalid email');
-    await expect(page.locator('#Submit')).toBeDisabled();
+    await expect(page.locator('.email_err')).toContainText(data.invalidEmailMessage);
+    await expect(page.locator(`#${data.submitButton}`)).toBeDisabled();
   });
 }
 test('REG-05 valid email format is accepted without submitting registration', async ({ page }) => {
-  await page.locator('#email_add').fill('automation@example.com');
+  await page.locator('#email_add').fill(data.validEmail);
   await page.locator('#full_name').click();
-  await expect(page.locator('.email_err')).toBeEmpty();
-  await expect(page.locator('#Submit')).toBeEnabled();
+  await expect(page.locator('.email_err')).toHaveText(data.emptyValue);
+  await expect(page.locator(`#${data.submitButton}`)).toBeEnabled();
 });
-for (const length of [49, 50, 51]) {
+for (const length of data.nameLengths) {
   test(`REG-06 @bva full name length ${length}`, async ({ page }) => {
-    await page.locator('#full_name').fill('A'.repeat(length));
-    await expect(page.locator('#full_name')).toHaveValue('A'.repeat(Math.min(length, 50)));
+    await page.locator('#full_name').fill(data.nameCharacter.repeat(length));
+    await expect(page.locator('#full_name')).toHaveValue(data.nameCharacter.repeat(Math.min(length, data.maximumNameLength)));
   });
 }
 test('REG-07 reset clears entered values', async ({ page }) => {
-  await page.locator('#username').fill('testuser123');
-  await page.locator('#password').fill('Password123!');
-  await page.locator('#Reset').click();
+  await page.locator('#username').fill(data.resetUsername);
+  await page.locator('#password').fill(data.resetPassword);
+  await page.locator(`#${data.resetButton}`).click();
   await expect(page.locator('#username')).toBeEmpty();
   await expect(page.locator('#password')).toBeEmpty();
 });
 test('REG-08 back to login', async ({ page }) => {
-  await page.getByRole('link', { name: 'Go back to Login page' }).click();
-  await expect(page.locator('#login')).toBeVisible();
+  await page.getByRole('link', { name: data.backLink }).click();
+  await expect(page.locator(`#${data.loginInput}`)).toBeVisible();
 });

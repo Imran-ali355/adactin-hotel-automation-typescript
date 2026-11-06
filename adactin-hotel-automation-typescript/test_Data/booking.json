@@ -1,0 +1,28 @@
+{
+  "required": [
+    ["firstName", "first_name_span"],
+    ["lastName", "last_name_span"],
+    ["address", "address_span"],
+    ["card", "cc_num_span"],
+    ["cardType", "cc_type_span"],
+    ["month", "cc_expiry_span"],
+    ["year", "cc_expiry_span"],
+    ["cvv", "cc_cvv_span"]
+  ],
+  "invalidCardLengths": [1, 14, 15],
+  "cardPrefix": "4",
+  "cardError": "16 Digit",
+  "cardMaxLength": 16,
+  "cardInputLength": 17,
+  "hotelUrl": "BookHotel\\.php",
+  "selectionUrl": "SelectHotel\\.php",
+  "searchUrl": "SearchHotel\\.php",
+  "itineraryUrl": "BookedItinerary\\.php",
+  "confirmationText": "Booking Confirmation",
+  "hotel": "Hotel Creek",
+  "location": "Sydney",
+  "roomType": "Standard",
+  "itineraryButton": "My Itinerary",
+  "cancelButtonPrefix": "Cancel ",
+  "searchButton": "Search Hotel"
+}

@@ -1,35 +1,32 @@
 import { test, expect } from '../../fixtures/hotel';
 import { dateAfter, searchData, bookingData } from '../../test-data/hotel';
+import data from '../../test_Data/requirements.json';
 
-// These are proposed requirements, not claims about what this demo implements.
-// Keep failures visible. Run explicitly with npm run test:requirements.
-for (const [name, checkIn, checkOut] of [
-  ['same-day stay', dateAfter(7), dateAfter(7)],
-  ['past stay', dateAfter(-2), dateAfter(-1)],
-  ['impossible calendar date', '31/02/2028', '03/03/2028'],
-  ['non-date text', 'abcdefghij', 'klmnopqrst'],
-]) {
-  test(`REQ-DATE @bva @edge reject ${name}`, async ({ page, search }) => {
+for (const scenario of data.dateCases) {
+  const checkIn = 'checkIn' in scenario ? scenario.checkIn : dateAfter(scenario.checkInOffset);
+  const checkOut = 'checkOut' in scenario ? scenario.checkOut : dateAfter(scenario.checkOutOffset);
+  test(`REQ-DATE @bva @edge reject ${scenario.name}`, async ({ page, search }) => {
     await search.search(searchData({ checkIn, checkOut }));
-    await expect(page).toHaveURL(/SearchHotel\.php/);
-    await expect(page.locator('#checkin_span, #checkout_span')).not.toHaveText(['', '']);
+    await expect(page).toHaveURL(new RegExp(data.searchUrl));
+    await expect(page.locator('#checkin_span, #checkout_span')).not.toHaveText(data.emptyMessages);
   });
 }
-for (const cvv of ['12', '12345', 'abc']) {
+for (const cvv of data.invalidCvv) {
   test(`REQ-CVV @bva @ep reject invalid CVV ${cvv}`, async ({ page, booking }) => {
-    // Leave first name empty to prevent booking even if the CVV validation is defective.
-    await booking.fill(bookingData({ firstName: '', cvv })); await booking.submit();
+    await booking.fill(bookingData({ firstName: data.emptyValue, cvv }));
+    await booking.submit();
     await expect(page.locator('#cc_cvv_span')).not.toBeEmpty();
   });
 }
 test('REQ-CARD @ep reject pasted alphabetic card number', async ({ page, booking }) => {
-  await booking.fill(bookingData({ firstName: '', card: 'abcdefghijklmnop' })); await booking.submit();
+  await booking.fill(bookingData({ firstName: data.emptyValue, card: data.invalidCard }));
+  await booking.submit();
   await expect(page.locator('#cc_num_span')).not.toBeEmpty();
 });
-for (const field of ['firstName', 'lastName', 'address'] as const) {
+for (const [field, error] of data.whitespaceFields) {
   test(`REQ-SPACE @ep whitespace-only ${field} is invalid`, async ({ page, booking }) => {
-    await booking.fill(bookingData({ [field]: '   ', cvv: '' })); await booking.submit();
-    const error = { firstName: 'first_name_span', lastName: 'last_name_span', address: 'address_span' }[field];
+    await booking.fill(bookingData({ [field]: data.whitespace, cvv: data.emptyCvv }));
+    await booking.submit();
     await expect(page.locator(`#${error}`)).not.toBeEmpty();
   });
 }

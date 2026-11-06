@@ -9,7 +9,6 @@ import { searchData } from '../test-data/hotel';
 type Fixtures = { search: SearchPage; booking: BookingPage; orders: string[] };
 export const test = base.extend<Fixtures>({
   search: async ({ page }, use) => {
-    test.skip(!process.env.ADACTIN_USERNAME || !process.env.ADACTIN_PASSWORD, 'Set ADACTIN_USERNAME and ADACTIN_PASSWORD to run authenticated UI tests.');
     await new LoginPage(page).loginAsUser();
     await use(new SearchPage(page));
   },

@@ -1,0 +1,13 @@
+{
+  "unknownOrder": "ZZNOTFOUND",
+  "orderInput": "order_id_text",
+  "orderMaxLength": 10,
+  "orderFillLength": 11,
+  "fillCharacter": "A",
+  "noResults": 0,
+  "oneOrder": 1,
+  "removeCount": 1,
+  "cancelButtonPrefix": "Cancel ",
+  "searchUrl": "BookedItinerary\\.php",
+  "unknownUrl": "BookedItinerary.php"
+}

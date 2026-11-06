@@ -1,0 +1,14 @@
+{
+  "forgotPasswordUrl": "ForgotPassword.php",
+  "submitButton": "Submit",
+  "resetButton": "Reset",
+  "emptyEmailMessage": "Empty",
+  "invalidEmails": ["invalid", "test@", "@example.com"],
+  "invalidEmailMessage": "Invalid email",
+  "resetEmail": "automation@example.com",
+  "passwordLink": "Change Password",
+  "passwordErrors": ["current_pass_span", "pass_span", "re_pass_span"],
+  "incorrectCurrentPassword": "deliberately-incorrect-current-password",
+  "newPassword": "TestPassword123!",
+  "differentPassword": "DifferentPassword123!"
+}
