@@ -1,0 +1,12 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.auth/
+auth*.json
+allure-results/
+allure-report/
+playwright-report/
+test-results/
+blob-report/
+*.log
