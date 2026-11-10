@@ -12,6 +12,8 @@
   "invalidCardLengths": [1, 14, 15],
   "cardPrefix": "4",
   "cardError": "16 Digit",
+  "cardErrorField": "cc_num_span",
+  "cvvErrorField": "cc_cvv_span",
   "cardMaxLength": 16,
   "cardInputLength": 17,
   "hotelUrl": "BookHotel\\.php",

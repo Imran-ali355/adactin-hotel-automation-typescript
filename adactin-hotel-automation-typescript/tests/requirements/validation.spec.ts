@@ -8,25 +8,25 @@ for (const scenario of data.dateCases) {
   test(`REQ-DATE @bva @edge reject ${scenario.name}`, async ({ page, search }) => {
     await search.search(searchData({ checkIn, checkOut }));
     await expect(page).toHaveURL(new RegExp(data.searchUrl));
-    await expect(page.locator('#checkin_span, #checkout_span')).not.toHaveText(data.emptyMessages);
+    for (const id of data.dateErrorFields) await expect(search.error(id)).not.toBeEmpty();
   });
 }
 for (const cvv of data.invalidCvv) {
   test(`REQ-CVV @bva @ep reject invalid CVV ${cvv}`, async ({ page, booking }) => {
     await booking.fill(bookingData({ firstName: data.emptyValue, cvv }));
     await booking.submit();
-    await expect(page.locator('#cc_cvv_span')).not.toBeEmpty();
+    await expect(booking.error(data.cvvErrorField)).not.toBeEmpty();
   });
 }
 test('REQ-CARD @ep reject pasted alphabetic card number', async ({ page, booking }) => {
   await booking.fill(bookingData({ firstName: data.emptyValue, card: data.invalidCard }));
   await booking.submit();
-  await expect(page.locator('#cc_num_span')).not.toBeEmpty();
+  await expect(booking.error(data.cardErrorField)).not.toBeEmpty();
 });
 for (const [field, error] of data.whitespaceFields) {
   test(`REQ-SPACE @ep whitespace-only ${field} is invalid`, async ({ page, booking }) => {
     await booking.fill(bookingData({ [field]: data.whitespace, cvv: data.emptyCvv }));
     await booking.submit();
-    await expect(page.locator(`#${error}`)).not.toBeEmpty();
+    await expect(booking.error(error)).not.toBeEmpty();
   });
 }

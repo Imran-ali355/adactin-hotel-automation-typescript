@@ -16,7 +16,7 @@ export default defineConfig({
     ['junit', { outputFile: 'test-results/junit.xml' }],
   ],
   use: {
-    baseURL: process.env.BASE_URL || 'https://adactinhotelapp.com/',
+    baseURL: process.env.BASE_URL || 'https://adactinhotelapp.com/HotelAppBuild2/',
     actionTimeout: 15_000,
     navigationTimeout: 45_000,
     screenshot: 'only-on-failure',

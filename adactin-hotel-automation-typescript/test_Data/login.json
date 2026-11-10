@@ -4,9 +4,9 @@
   "fields": ["username", "password", "login"],
   "passwordType": "password",
   "emptyCases": [
-    { "name": "both empty", "user": "", "pass": "", "error": "#username_span" },
-    { "name": "username empty", "user": "", "pass": "invalid", "error": "#username_span" },
-    { "name": "password empty", "user": "testuser", "pass": "", "error": "#password_span" }
+    { "name": "both empty", "user": "", "pass": "", "error": "username_span" },
+    { "name": "username empty", "user": "", "pass": "invalid", "error": "username_span" },
+    { "name": "password empty", "user": "testuser", "pass": "", "error": "password_span" }
   ],
   "invalidCases": [
     ["unknown user", "unknown_pw_test_34883", "invalid"],

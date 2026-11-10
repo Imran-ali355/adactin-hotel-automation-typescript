@@ -18,14 +18,16 @@
   "noResults": 0,
   "emptyValue": "",
   "invalidDropdowns": [
-    ["room_nos", ["0", "11"]],
-    ["adult_room", ["0", "5"]],
-    ["child_room", ["-1", "5"]]
+    { "id": "room_nos", "values": ["0", "11"] },
+    { "id": "adult_room", "values": ["0", "5"] },
+    { "id": "child_room", "values": ["-1", "5"] }
   ],
   "optionalResults": 4,
   "roomTypes": ["Standard", "Double", "Deluxe", "Super Deluxe"],
   "beforeError": "before",
   "afterError": "after",
+  "checkInError": "checkin_span",
+  "checkOutError": "checkout_span",
   "oneNight": "1",
   "checkoutBeforeOffsets": { "checkIn": 8, "checkOut": 7 },
   "oneNightOffsets": { "checkIn": 7, "checkOut": 8 },

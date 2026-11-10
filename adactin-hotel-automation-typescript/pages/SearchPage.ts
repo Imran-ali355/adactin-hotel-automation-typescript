@@ -2,6 +2,18 @@ import { type Page } from '@playwright/test';
 import { type SearchData } from '../test-data/hotel';
 export class SearchPage {
   constructor(readonly page: Page) {}
+  get locationResults() { return this.page.locator('input[id^="location_"]'); }
+  get hotelRadios() { return this.page.locator('input[type="radio"]'); }
+  get roomTypeResults() { return this.page.locator('input[id^="room_type_"]'); }
+  get nightsResults() { return this.page.locator('input[id^="no_days_"]'); }
+  get locationField() { return this.page.locator('#location'); }
+  get roomsField() { return this.page.locator('#room_nos'); }
+  get adultsField() { return this.page.locator('#adult_room'); }
+  get childrenField() { return this.page.locator('#child_room'); }
+  get checkInField() { return this.page.locator('#datepick_in'); }
+  get resetButton() { return this.page.locator('#Reset'); }
+  error(id: string) { return this.page.locator(`#${id}`); }
+  option(id: string, value: string) { return this.page.locator(`#${id} option[value="${value}"]`); }
   async fill(data: SearchData) {
     await this.page.locator('#location').selectOption(data.location);
     await this.page.locator('#hotels').selectOption(data.hotel);

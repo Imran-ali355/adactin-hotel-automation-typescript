@@ -8,7 +8,7 @@ test('ITIN-01 find and cancel only the booking created by this test', async ({ p
   orders.push(order);
   const itinerary = new ItineraryPage(page);
   await itinerary.find(order);
-  const button = page.getByRole('button', { name: `${data.cancelButtonPrefix}${order}`, exact: true });
+  const button = itinerary.orderCancelButton(order);
   await expect(button).toHaveCount(data.oneOrder);
   page.once('dialog', dialog => dialog.dismiss());
   await button.click();
@@ -18,10 +18,11 @@ test('ITIN-01 find and cancel only the booking created by this test', async ({ p
 });
 test('ITIN-02 unknown order does not match a booking', async ({ page, search }) => {
   await new ItineraryPage(page).find(data.unknownOrder);
-  await expect(page.locator('input[id^="btn_id_"]')).toHaveCount(data.noResults);
+  await expect(new ItineraryPage(page).bookingButtons).toHaveCount(data.noResults);
 });
 test('ITIN-03 @bva order filter limits input length', async ({ page, search }) => {
   await page.goto(data.unknownUrl, { waitUntil: 'domcontentloaded' });
-  await page.locator(`#${data.orderInput}`).fill(data.fillCharacter.repeat(data.orderFillLength));
-  await expect(page.locator(`#${data.orderInput}`)).toHaveValue(data.fillCharacter.repeat(data.orderMaxLength));
+  const itinerary = new ItineraryPage(page);
+  await itinerary.orderFilter.fill(data.fillCharacter.repeat(data.orderFillLength));
+  await expect(itinerary.orderFilter).toHaveValue(data.fillCharacter.repeat(data.orderMaxLength));
 });
