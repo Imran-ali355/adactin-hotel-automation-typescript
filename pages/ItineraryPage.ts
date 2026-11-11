@@ -7,17 +7,24 @@ export class ItineraryPage {
   orderCancelButton(order: string) { return this.page.getByRole('button', { name: `Cancel ${order}`, exact: true }); }
   async find(order: string) {
     // Search first; never cancel or select unrelated bookings on a shared account.
-    await this.page.goto('BookedItinerary.php', { waitUntil: 'domcontentloaded' });
+    if (!this.page.url().includes('BookedItinerary.php')) {
+      await this.page.goto('BookedItinerary.php', { waitUntil: 'commit' });
+    }
     await this.orderFilter.fill(order);
-    await this.searchButton.click();
+    await Promise.all([
+      this.page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
+      this.searchButton.evaluate((button: HTMLInputElement) => button.click()),
+    ]);
   }
   async cancel(order: string) {
-    await this.find(order);
+    if (!this.page.url().includes('BookedItinerary.php')) await this.find(order);
     const button = this.orderCancelButton(order);
     await expect(button).toBeVisible();
     this.page.once('dialog', dialog => dialog.accept());
-    await button.click();
-    await this.find(order);
+    await Promise.all([
+      this.page.waitForNavigation({ waitUntil: 'commit' }),
+      button.evaluate((element: HTMLInputElement) => element.click()),
+    ]);
     await expect(button).toHaveCount(0);
   }
 }

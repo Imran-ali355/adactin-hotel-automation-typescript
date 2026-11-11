@@ -26,6 +26,10 @@ export class BookingPage {
     await this.page.locator('#cc_cvv').fill(data.cvv);
   }
   async submit() { await this.bookButton.click(); }
+  async openItinerary() {
+    await this.itineraryButton.evaluate((button: HTMLInputElement) => button.click());
+    await this.page.waitForURL('**/BookedItinerary.php', { waitUntil: 'commit' });
+  }
   async book(data: BookingData): Promise<string> {
     await this.fill(data); await this.submit();
     await expect(this.page).toHaveURL(/BookingConfirm\.php/, { timeout: 60_000 });

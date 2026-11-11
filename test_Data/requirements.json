@@ -1,4 +1,5 @@
 {
+  "knownDemoDefect": "Adactin Build 2 does not implement these validation requirements",
   "dateCases": [
     { "name": "same-day stay", "checkInOffset": 7, "checkOutOffset": 7 },
     { "name": "past stay", "checkInOffset": -2, "checkOutOffset": -1 },

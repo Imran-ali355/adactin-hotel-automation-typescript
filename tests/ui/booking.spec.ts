@@ -1,5 +1,6 @@
 import { test, expect } from '../../fixtures/hotel';
 import { bookingData, type BookingData } from '../../test-data/hotel';
+import { ItineraryPage } from '../../pages/ItineraryPage';
 import data from '../../test_Data/booking.json';
 
 for (const [field, error] of data.required) {
@@ -34,8 +35,9 @@ test('BOOK-05 @smoke booking, confirmation and itinerary', async ({ page, bookin
   await expect(booking.hotelName).toHaveValue(data.hotel);
   await expect(booking.location).toHaveValue(data.location);
   await expect(booking.roomType).toHaveValue(data.roomType);
-  await booking.itineraryButton.click();
+  await booking.openItinerary();
   await expect(page).toHaveURL(new RegExp(data.itineraryUrl));
+  await new ItineraryPage(page).find(order);
   await expect(booking.cancelOrderButton(order)).toBeVisible();
 });
 test('BOOK-06 confirmation search button', async ({ page, booking, orders }) => {
